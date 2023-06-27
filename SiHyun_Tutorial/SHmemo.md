@@ -10,5 +10,6 @@ https://www.youtube.com/playlist?list=PLFrhecWXVn5862cxJgysq9PYSjLdfNiHz
 그전까지는 기본적인 내용들. UI 적응. 키 적응.
 
 (0627일)
+
 튜토리얼 08강 부터 시작.
 top operate -> movie in 으로 사진이나 영상 넣을수 있음. 
