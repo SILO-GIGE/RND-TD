@@ -1,0 +1,52 @@
+from PIL import Image
+from brother_ql.conversion import convert
+from brother_ql.backends.helpers import send
+from brother_ql.raster import BrotherQLRaster
+
+import socket
+import time
+
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5005
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
+sock.bind((UDP_IP, UDP_PORT))
+
+while True:
+    data, addr = sock.recvfrom(4096)  # buffer size is 1024 bytes
+    # print("received message: %sww" % data)
+    # print("1")
+    data = sock.recv(4096)
+    # print(sock.recv(512))
+    final_data = data[-1:]
+    print(final_data)
+
+    if final_data == b'\x00':
+        pass
+    else:
+        im = Image.open("C:/Users/user/Desktop/TDMovieOut.0.bmp")
+
+        backend = 'pyusb'  # 'pyusb', 'linux_kernal', 'network'
+        model = 'QL-700'  # your printer model.
+        printer = 'usb://0x04f9:0x2042'  # Get these values from the Windows usb driver filter.  Linux/Raspberry Pi uses '/dev/usb/lp0'.
+
+        qlr = BrotherQLRaster(model)
+        qlr.exception_on_warning = True
+
+        instructions = convert(
+
+            qlr=qlr,
+            images=[im],  # Takes a list of file names or PIL objects.
+            label='62',
+            rotate='0',  # 'Auto', '0', '90', '270'
+            threshold=0,  # Black and white threshold in percent.
+            dither=True,
+            compress=True,
+            red=False,  # Only True if using Red/Black 62 mm label tape.
+            dpi_600=True,
+            hq=True,  # False for low quality.
+            cut=True
+
+        )
+
+        send(instructions=instructions, printer_identifier=printer, backend_identifier=backend, blocking=True)
+        time.sleep(0.15)
